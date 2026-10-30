@@ -1,0 +1,56 @@
+import tkinter as tk
+from tkinter import ttk
+
+def add_row(row, text, widget):
+    ttk.Label(form, text=text).grid(row=row, column=0, sticky="e", padx=4, pady=4)
+    widget.grid(row=row, column=1, sticky="ew", padx=4, pady=4)
+
+def submit(event=None):
+    symbol = symbol_entry.get().strip().upper()
+    side = side_box.get()
+    try:
+        entry_price = float(entry_price_entry.get())
+        exit_price = float(exit_price_entry.get())
+        size = float(size_entry.get())
+    except ValueError:
+        result_label.config(text="Prices and size must be numbers.")
+        return
+    if not symbol:
+        result_label.config(text="Symbol is required.")
+        return
+
+    if side == "Long":
+        pnl = (exit_price - entry_price) * size * 5
+    else:
+        pnl = (entry_price - exit_price) * size * 5
+    result_label.config(text=f"{symbol} {side}: P&L {pnl:+,.2f}")
+
+root = tk.Tk()
+root.title("Warm-up 2: Trade Form")
+root.columnconfigure(0, weight=1)
+
+form = ttk.Frame(root, padding=12)
+form.grid(row=0, column=0, sticky="nsew")
+form.columnconfigure(1, weight=1)
+
+symbol_entry = ttk.Entry(form)
+side_box = ttk.Combobox(form, values=["Long", "Short"], state="readonly")
+side_box.current(0)
+entry_price_entry = ttk.Entry(form)
+exit_price_entry = ttk.Entry(form)
+size_entry = ttk.Entry(form)
+
+add_row(0, "Symbol:", symbol_entry)
+add_row(1, "Side:", side_box)
+add_row(2, "Entry price:", entry_price_entry)
+add_row(3, "Exit price:", exit_price_entry)
+add_row(4, "Size:", size_entry)
+
+ttk.Button(form, text="Submit", command=submit).grid(row=5, column=0, columnspan=2, pady=8)
+result_label = ttk.Label(form, text="")
+result_label.grid(row=6, column=0, columnspan=2)
+
+symbol_entry.focus()
+root.bind("<Return>", submit)
+
+root.mainloop()
