@@ -1,1 +1,2 @@
 *.env
+__pyside6_tests__
